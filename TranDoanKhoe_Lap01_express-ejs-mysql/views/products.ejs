@@ -141,12 +141,51 @@
         .actions-cell button {
             margin-right: 5px;
         }
+        
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info span {
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .btn-logout {
+            background: #d9534f;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        
+        .btn-logout:hover {
+            background: #c9302c;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>Product Management System</h1>
+        <div class="header-bar">
+            <h1>Product Management System</h1>
+            <div class="user-info">
+                <span>👤 <%= user.username %></span>
+                <a href="/logout" class="btn-logout">Đăng xuất</a>
+            </div>
+        </div>
 
         <div class="top-section">
             <!-- Add/Edit Form -->
