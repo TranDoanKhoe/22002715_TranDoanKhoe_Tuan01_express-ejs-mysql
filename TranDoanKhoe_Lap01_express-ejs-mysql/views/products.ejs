@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Product Management</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            margin: 0 0 20px 0;
+            color: #333;
+        }
+        
+        .top-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .form-box {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        
+        .form-box h3 {
+            margin-top: 0;
+            color: #555;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 10px;
+        }
+        
+        .form-group label {
+            display: inline-block;
+            width: 80px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            width: 200px;
+        }
+        
+        button {
+            padding: 7px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button[type="submit"] {
+            background: #5cb85c;
+            color: white;
+        }
+        
+        button[type="submit"]:hover {
+            background: #4cae4c;
+        }
+        
+        button[type="button"] {
+            background: #999;
+            color: white;
+        }
+        
+        button[type="button"]:hover {
+            background: #777;
+        }
+        
+        .btn-edit {
+            background: #5bc0de !important;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #46b8da !important;
+        }
+        
+        .btn-delete {
+            background: #d9534f;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #c9302c;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        th {
+            background: #5cb85c;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: normal;
+        }
+        
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .actions-cell {
+            white-space: nowrap;
+        }
+        
+        .actions-cell button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Product Management System</h1>
+
+        <div class="top-section">
+            <!-- Add/Edit Form -->
+            <div class="form-box">
+                <h3>
+                    <%= typeof editProduct !== 'undefined' ? '📝 Edit Product' : '➕ Add New Product' %>
+                </h3>
+                <form action="<%= typeof editProduct !== 'undefined' ? '/update/' + editProduct.id : '/add' %>" method="post">
+                    <div class="form-group">
+                        <label>Name:</label>
+                        <input type="text" name="name" value="<%= typeof editProduct !== 'undefined' ? editProduct.name : '' %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price:</label>
+                        <input type="number" name="price" step="0.01" value="<%= typeof editProduct !== 'undefined' ? editProduct.price : '' %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity:</label>
+                        <input type="number" name="quantity" value="<%= typeof editProduct !== 'undefined' ? editProduct.quantity : '' %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label></label>
+                        <button type="submit"><%= typeof editProduct !== 'undefined' ? 'Update' : 'Add' %></button>
+                        <% if (typeof editProduct !== 'undefined') { %>
+                            <a href="/"><button type="button">Cancel</button></a>
+                            <% } %>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Form -->
+            <div class="form-box">
+                <h3>🔍 Search Products</h3>
+                <form action="/search" method="get">
+                    <div class="form-group">
+                        <label>Keyword:</label>
+                        <input type="text" name="keyword" value="<%= typeof keyword !== 'undefined' ? keyword : '' %>" placeholder="Search by name...">
+                    </div>
+                    <div class="form-group">
+                        <label></label>
+                        <button type="submit">Search</button>
+                        <% if (typeof keyword !== 'undefined' && keyword) { %>
+                            <a href="/"><button type="button">Clear</button></a>
+                            <% } %>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Product List -->
+        <h3>📦 Product List (
+            <%= products.length %> items)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th width="50">ID</th>
+                    <th>Product Name</th>
+                    <th width="100">Price ($)</th>
+                    <th width="100">Quantity</th>
+                    <th width="150">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (products.length === 0) { %>
+                    <tr>
+                        <td colspan="5" style="text-align:center; color:#999;">No products found</td>
+                    </tr>
+                    <% } else { %>
+                        <% products.forEach(p => { %>
+                            <tr>
+                                <td>
+                                    <%= p.id %>
+                                </td>
+                                <td>
+                                    <%= p.name %>
+                                </td>
+                                <td>$
+                                    <%= parseFloat(p.price).toFixed(2) %>
+                                </td>
+                                <td>
+                                    <%= p.quantity %>
+                                </td>
+                                <td class="actions-cell">
+                                    <a href="/edit/<%= p.id %>"><button type="button" class="btn-edit">Edit</button></a>
+                                    <form action="/delete/<%= p.id %>" method="post" style="display:inline;" onsubmit="return confirm('Delete <%= p.name %>?');">
+                                        <button type="submit" class="btn-delete">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } %>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
