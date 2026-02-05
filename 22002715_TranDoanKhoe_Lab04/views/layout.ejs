@@ -1,0 +1,11 @@
+<nav>
+  <a href="/products">Products</a> |
+  <a href="/categories">Categories</a> |
+  <% if (!currentUser) { %>
+    <a href="/login">Login</a>
+  <% } else { %>
+    <span>Hi <%= currentUser.username %> (<%= currentUser.role %>)</span>
+    <form action="/logout" method="post" style="display:inline"><button type="submit">Logout</button></form>
+  <% } %>
+</nav>
+

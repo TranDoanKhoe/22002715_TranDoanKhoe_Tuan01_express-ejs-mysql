@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Category - Lab4</title>
+    <link rel="stylesheet" href="/public/style.css" />
+  </head>
+  <body>
+    <%- include('../layout') %>
+    <main>
+      <section>
+        <h2>Edit Category</h2>
+        <form
+          action="/categories/<%= category.categoryId %>?_method=PUT"
+          method="post"
+        >
+          <div>
+            <label>Name</label
+            ><input name="name" value="<%= category.name %>" />
+          </div>
+          <div>
+            <label>Description</label
+            ><input name="description" value="<%= category.description %>" />
+          </div>
+          <button type="submit">Save</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

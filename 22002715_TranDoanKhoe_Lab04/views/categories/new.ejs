@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Add Category - Lab4</title>
+    <link rel="stylesheet" href="/public/style.css" />
+  </head>
+  <body>
+    <%- include('../layout') %>
+    <main>
+      <section>
+        <h2>Add Category</h2>
+        <form action="/categories" method="post">
+          <div><label>Name</label><input name="name" /></div>
+          <div><label>Description</label><input name="description" /></div>
+          <button type="submit">Create</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

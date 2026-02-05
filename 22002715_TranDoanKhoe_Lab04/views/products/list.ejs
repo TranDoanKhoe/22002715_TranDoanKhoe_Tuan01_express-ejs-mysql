@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Products - Lab4</title>
+    <link rel="stylesheet" href="/public/style.css">
+  </head>
+  <body>
+    <%- include('../layout') %>
+    <main>
+      <section>
+        <h2>Products</h2>
+        <% if (currentUser && currentUser.role === 'admin') { %>
+          <a href="/products/new">Add Product</a>
+        <% } %>
+
+        <form method="get" action="/products">
+          <input name="q" placeholder="Search name">
+          <select name="category">
+            <option value="">All categories</option>
+            <% categories.forEach(c => { %>
+              <option value="<%= c.categoryId %>"><%= c.name %></option>
+            <% }) %>
+          </select>
+          <button>Filter</button>
+        </form>
+
+        <table>
+          <thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Qty</th><th>Actions</th></tr></thead>
+          <tbody>
+            <% products.forEach(p => { %>
+              <tr>
+                <td><% if (p.url_image) { %><img src="<%= p.url_image %>" width="80"><% } %></td>
+                <td><%= p.name %></td>
+                <td><%= p.price %></td>
+                <td><%= p.quantity %></td>
+                <td>
+                  <% if (currentUser && currentUser.role === 'admin') { %>
+                    <a href="/products/<%= p.id %>/edit">Edit</a>
+                    <form action="/products/<%= p.id %>?_method=DELETE" method="post" style="display:inline">
+                      <button type="submit">Delete</button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+
+        <div>
+          Page <%= pagination.page %> / <%= pagination.pages %>
+          <% if (pagination.page > 1) { %>
+            <a href="?page=<%= pagination.page - 1 %>">Prev</a>
+          <% } %>
+          <% if (pagination.page < pagination.pages) { %>
+            <a href="?page=<%= pagination.page + 1 %>">Next</a>
+          <% } %>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
