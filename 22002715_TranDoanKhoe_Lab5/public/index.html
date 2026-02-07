@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Products CRUD</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 20px;
+      }
+      input,
+      button {
+        padding: 6px;
+        margin: 4px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Products</h1>
+    <div id="form">
+      <input id="name" placeholder="Name" />
+      <input id="price" placeholder="Price" type="number" />
+      <input id="url_image" placeholder="Image URL" />
+      <button id="create">Create</button>
+      <button id="refresh">Refresh</button>
+    </div>
+    <hr />
+    <div id="list"></div>
+
+    <script>
+      const api = "/products";
+      async function fetchList() {
+        const res = await fetch(api);
+        const items = await res.json();
+        render(items);
+      }
+      function render(items) {
+        const container = document.getElementById("list");
+        if (!items.length) {
+          container.innerHTML = "<p>No products</p>";
+          return;
+        }
+        let html =
+          "<table><tr><th>Name</th><th>Price</th><th>Image</th><th>Actions</th></tr>";
+        for (const p of items) {
+          html += `<tr data-id="${p.id}"><td>${p.name}</td><td>${p.price}</td><td>${p.url_image ? '<img src="' + p.url_image + '" width="80">' : ""}</td><td><button class="edit">Edit</button> <button class="del">Delete</button></td></tr>`;
+        }
+        html += "</table>";
+        container.innerHTML = html;
+        container.querySelectorAll(".del").forEach((b) =>
+          b.addEventListener("click", async (e) => {
+            const id = e.target.closest("tr").dataset.id;
+            if (!confirm("Delete?")) return;
+            await fetch(api + "/" + id, { method: "DELETE" });
+            await fetchList();
+          }),
+        );
+        container.querySelectorAll(".edit").forEach((b) =>
+          b.addEventListener("click", async (e) => {
+            const tr = e.target.closest("tr");
+            const id = tr.dataset.id;
+            const name = prompt("Name", tr.children[0].innerText);
+            const price = prompt("Price", tr.children[1].innerText);
+            const url = prompt("Image URL", "");
+            if (name == null) return;
+            await fetch(api + "/" + id, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name,
+                price: Number(price),
+                url_image: url,
+              }),
+            });
+            await fetchList();
+          }),
+        );
+      }
+
+      document.getElementById("create").addEventListener("click", async () => {
+        const name = document.getElementById("name").value;
+        const price = Number(document.getElementById("price").value);
+        const url = document.getElementById("url_image").value;
+        if (!name) return alert("Name required");
+        await fetch(api, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, price, url_image: url }),
+        });
+        document.getElementById("name").value = "";
+        document.getElementById("price").value = "";
+        document.getElementById("url_image").value = "";
+        await fetchList();
+      });
+
+      document.getElementById("refresh").addEventListener("click", fetchList);
+      window.addEventListener("load", fetchList);
+    </script>
+  </body>
+</html>
